@@ -1,123 +1,86 @@
 import React, {Component} from 'react';
-import async from 'async';
-import {Button, StyleSheet, View, StatusBar} from 'react-native';
-import _ from 'lodash';
-
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import Orientation from 'react-native-orientation';
+import {FlatList, ImageBackground, StyleSheet, View, Text} from 'react-native';
+const cardDataList = require('../PlayMenuCardData').cardDataList;
 
 const TAG = 'TestTag';
-let clickCount = 0;
+const listData = [
+  {title: '1', key: 1},
+  {title: '2', key: 2},
+  {title: '3', key: 3},
+  {title: '4', key: 4},
+  {title: '5', key: 5},
+  {title: '6', key: 6},
+  {title: '7', key: 7},
+];
 
 class FlatListPage extends Component {
   constructor(props) {
     super(props);
-    this.initSendQueue();
   }
 
-  initSendQueue = () => {
-    this.sendQueue = async.queue((task, callback) => {
-      setTimeout(() => {
-        console.log(TAG, JSON.stringify(task));
-        callback();
-      }, 2000);
-    }, 1);
-  };
+  componentDidMount(): void {
+    Orientation.lockToLandscape();
+  }
+
+  componentWillUnmount(): void {
+    Orientation.unlockAllOrientations();
+  }
 
   render() {
     return (
-      <>
-        <StatusBar barStyle="dark-content" />
-        <View style={styles.engine}>
-          <Button title={'AAA'} onPress={() => this._onAButtonClick()} />
-          <Button
-            title={'BBB'}
-            style={{paddingTop: 30}}
-            onPress={() => this._onBButtonClick()}
-          />
-          <Button
-            title={'CCC'}
-            style={{paddingTop: 30}}
-            onPress={() => this._onCButtonClick()}
-          />
-          <Button
-            title={'for'}
-            style={{paddingTop: 30}}
-            onPress={() => this._onForButtonClick()}
-          />
-        </View>
-      </>
+      <FlatList
+        style={{backgroundColor: '#f90'}}
+        ref="listRef"
+        horizontal={true}
+        data={cardDataList}
+        keyExtractor={(item) => {
+          item.key;
+        }}
+        initRenderNum={3}
+        ListHeaderComponent={<View style={{width: 150}} />}
+        ListFooterComponent={<View style={{width: 150}} />}
+        renderItem={(item) => this._renderItem(item)}
+        getItemLayout={(data, index) => ({
+          length: 200,
+          offset: 200 * index,
+          index,
+        })}
+      />
     );
   }
 
-  getThrottleFunc = _.throttle(
-    (queue, obj, string) => queue.push({obj: obj, text: string}),
-    200,
-  );
-
-  getThrottleUnShiftFunc = _.throttle(
-    (queue, obj, string) => queue.push({obj: obj, text: string}),
-    200,
-  );
-
-  _pushCmd = (queue, cmd) =>
-    queue.push({obj: cmd.obj, text: cmd.text, num: cmd.num});
-
-  _onAButtonClick = () => {
-    let cmd = {obj: 'AAA', text: 'AAA ', num: clickCount};
-    this._removeQueueSameItem(cmd);
-    this._pushCmd(this.sendQueue, cmd);
-
-    clickCount++;
-  };
-
-  _onBButtonClick = () => {
-    let cmd = {obj: 'BBB', text: 'BBB ', num: clickCount};
-    this._removeQueueSameItem(cmd);
-    this._pushCmd(this.sendQueue, cmd);
-
-    clickCount++;
-  };
-
-  _onCButtonClick = () => {
-    let cmd = {obj: 'CCC', text: 'CCC ', num: clickCount};
-    this._removeQueueSameItem(cmd);
-    this._pushCmd(this.sendQueue, cmd);
-
-    clickCount++;
-  };
-
-  _onForButtonClick = () => {
-    for (let item of this.sendQueue) {
-      console.log(TAG, 'get queue item -> ' + item.text);
-    }
-  };
-
-  _removeQueueSameItem = (cmd) => {
-    console.log(TAG, '_removeQueueSameItem');
-    this.sendQueue.remove((node) => {
-      console.log(TAG, '_removeQueueSameItem node ' + node.data.num);
-      return node.data.obj === cmd.obj;
-    });
-  };
-
-  _unqunieQueueItem = (cmd) => {
-    for (let item of this.sendQueue) {
-      if (item.obj === cmd.obj) {
-        item = cmd;
-        return true;
-      }
-    }
-    return false;
+  _renderItem = ({item}) => {
+    return <ListItem title={item.title} normalImage={item.normalImage} />;
   };
 }
 
+class ListItem extends Component {
+  render() {
+    console.log(TAG, 'render item');
+    return (
+      <ImageBackground style={styles.bg} source={this.props.normalImage}>
+        <Text style={styles.item}>{this.props.title}</Text>
+      </ImageBackground>
+    );
+  }
+}
+
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  bg: {
+    height: 300,
+    width: 300,
+    alignSelf: 'center',
+    padding: 10,
+    margin: 50,
   },
-  engine: {
-    flex: 1,
-    justifyContent: 'center',
+  item: {
+    fontSize: 20,
+    color: '#fff',
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    height: 300,
+    width: 300,
   },
 });
 

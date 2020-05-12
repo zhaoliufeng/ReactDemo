@@ -2,7 +2,13 @@ import React, {Component} from 'react';
 import {StyleSheet, View, FlatList, Text} from 'react-native';
 
 const TAG = 'AppTag';
-const menuData = [{title: '水平FlatList', routeName: 'FlatListPage'}];
+const menuData = [
+  {title: '水平FlatList', routeName: 'FlatListPage'},
+  {title: '帧动画', routeName: 'FrameAnimate'},
+];
+const func = (val) => {
+  console.log(TAG, val);
+};
 
 class App extends Component {
   constructor(props) {
