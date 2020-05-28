@@ -5,6 +5,7 @@ const TAG = 'AppTag';
 const menuData = [
   {title: '水平FlatList', routeName: 'FlatListPage'},
   {title: '帧动画', routeName: 'FrameAnimate'},
+  {title: '触摸事件传递', routeName: 'ViewFramePage'},
 ];
 const func = (val) => {
   console.log(TAG, val);
