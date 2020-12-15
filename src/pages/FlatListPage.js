@@ -30,8 +30,6 @@ class FlatListPage extends Component {
   render() {
     return (
       <FlatList
-        style={{backgroundColor: '#f90'}}
-        ref="listRef"
         horizontal={true}
         data={cardDataList}
         keyExtractor={(item) => {
